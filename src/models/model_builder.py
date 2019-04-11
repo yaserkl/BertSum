@@ -51,8 +51,6 @@ class Bert(nn.Module):
     def forward(self, x, segs, mask):
         encoded_layers, _ = self.model(x, segs, attention_mask =mask)
         top_vec = encoded_layers[-1]
-        import ipdb
-        ipdb.set_trace()
         return top_vec
 
 
@@ -97,4 +95,6 @@ class Summarizer(nn.Module):
         sents_vec = top_vec[torch.arange(top_vec.size(0)).unsqueeze(1), clss]
         sents_vec = sents_vec * mask_cls[:, :, None].float()
         sent_scores = self.encoder(sents_vec, mask_cls).squeeze(-1)
+        import ipdb
+        ipdb.set_trace()
         return sent_scores, mask_cls

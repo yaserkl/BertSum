@@ -51,6 +51,8 @@ class Bert(nn.Module):
     def forward(self, x, segs, mask):
         encoded_layers, _ = self.model(x, segs, attention_mask =mask)
         top_vec = encoded_layers[-1]
+        import ipdb
+        ipdb.set_trace()
         return top_vec
 
 

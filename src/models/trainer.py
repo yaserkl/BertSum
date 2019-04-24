@@ -2,10 +2,10 @@ import os
 
 import numpy as np
 import torch
-from tensorboardX import SummaryWriter
 
 import distributed
 # import onmt
+from tensorboardX import SummaryWriter
 from models.reporter import ReportMgr
 from models.stats import Statistics
 from others.logging import logger
@@ -299,8 +299,6 @@ class Trainer(object):
         self._report_step(0, step, valid_stats=stats)
 
         return stats
-
-
 
     def _gradient_accumulation(self, true_batchs, normalization, total_stats,
                                report_stats):

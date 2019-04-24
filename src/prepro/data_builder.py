@@ -14,7 +14,7 @@ from pytorch_pretrained_bert import BertTokenizer
 from others.logging import logger
 from others.utils import clean
 from prepro.utils import _get_word_ngrams
-
+from textblob import TextBlob
 
 def load_json(p, lower):
 
@@ -160,9 +160,9 @@ class BertData():
         for l in oracle_ids:
             labels[l] = 1
 
-        idxs = [i for i, s in enumerate(src) if (len(s) > self.args.min_src_ntokens)]
+        idxs = [i for i, s in enumerate(src) if (len(s) > self.args.min_src_ntokens)] # filter out short sentences
 
-        src = [src[i][:self.args.max_src_ntokens] for i in idxs]
+        src = [src[i][:self.args.max_src_ntokens] for i in idxs] # trim long sentences
         labels = [labels[i] for i in idxs]
         src = src[:self.args.max_nsents]
         labels = labels[:self.args.max_nsents]
@@ -198,7 +198,6 @@ class BertData():
 
 
 def format_to_bert(args):
-
     if(args.dataset!=''):
         datasets = [args.dataset]
     else:
@@ -239,11 +238,17 @@ def _format_to_bert(params):
         if (b_data is None):
             continue
         indexed_tokens, labels, segments_ids, cls_ids, src_txt, tgt_txt = b_data
+        sentiments = []
+        pos_tags = []
+        for txt in src_txt:
+            tb = TextBlob(txt)
+            sentiments.append({'polarity': tb.sentiment.polarity, 'subjectivity': tb.sentiment.subjectivity})
+            pos_tags.append([pt for (w, pt) in tb.tags])
         b_data_dict = {"src": indexed_tokens, "labels": labels, "segs": segments_ids, 'clss': cls_ids,
-                       'src_txt': src_txt, "tgt_txt": tgt_txt}
+                       'src_txt': src_txt, "tgt_txt": tgt_txt, 'sentiments': sentiments, 'pos_tags': pos_tags}
         datasets.append(b_data_dict)
     logger.info('Saving to %s'%save_file)
-    torch.save(datasets,save_file)
+    torch.save(datasets, save_file)
     datasets = []
     gc.collect()
 

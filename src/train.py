@@ -70,7 +70,7 @@ def run(args, device_id, error_queue):
             raise AssertionError("An error occurred in \
                   Distributed initialization")
 
-        train(args,device_id)
+        train(args, device_id)
     except KeyboardInterrupt:
         pass  # killed by parent, do nothing
     except Exception:

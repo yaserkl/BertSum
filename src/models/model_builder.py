@@ -54,7 +54,6 @@ class Bert(nn.Module):
         return top_vec
 
 
-
 class Summarizer(nn.Module):
     def __init__(self, args,   device, checkpoint=None):
         super(Summarizer, self).__init__()

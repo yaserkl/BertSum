@@ -25,7 +25,6 @@ class Batch(object):
             pre_clss = [x[3] for x in data]
 
             src = torch.tensor(self._pad(pre_src, 0))
-
             labels = torch.tensor(self._pad(pre_labels, 0))
             segs = torch.tensor(self._pad(pre_segs, 0))
             mask = 1 - (src == 0)
@@ -156,12 +155,12 @@ class DataIterator(object):
                  shuffle=True):
         self.args = args
         self.batch_size, self.is_test, self.dataset = batch_size, is_test, dataset
-        self.iterations = 0
         self.device = device
         self.shuffle = shuffle
 
         self.sort_key = lambda x: len(x[1])
 
+        self.iterations = 0
         self._iterations_this_epoch = 0
 
     def data(self):
@@ -169,7 +168,6 @@ class DataIterator(object):
             random.shuffle(self.dataset)
         xs = self.dataset
         return xs
-
 
     def preprocess(self, ex, is_test):
         src = ex['src']

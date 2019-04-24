@@ -14,7 +14,11 @@ from pytorch_pretrained_bert import BertTokenizer
 from others.logging import logger
 from others.utils import clean
 from prepro.utils import _get_word_ngrams
-from textblob import TextBlob
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+sid = SentimentIntensityAnalyzer()
+import spacy
+nlp = spacy.load('en_core_web_sm')
+
 
 def load_json(p, lower):
 
@@ -241,9 +245,12 @@ def _format_to_bert(params):
         sentiments = []
         pos_tags = []
         for txt in src_txt:
-            tb = TextBlob(txt)
-            sentiments.append({'polarity': tb.sentiment.polarity, 'subjectivity': tb.sentiment.subjectivity})
-            pos_tags.append([pt for (w, pt) in tb.tags])
+            #tb = TextBlob(txt)
+            #sentiments.append({'polarity': tb.sentiment.polarity, 'subjectivity': tb.sentiment.subjectivity})
+            #pos_tags.append([pt for (w, pt) in tb.tags])
+            sentiments.append(sid.polarity_scores(txt))
+            sent = nlp(txt)
+            pos_tags.append([token.pos_ for token in sent])
         b_data_dict = {"src": indexed_tokens, "labels": labels, "segs": segments_ids, 'clss': cls_ids,
                        'src_txt': src_txt, "tgt_txt": tgt_txt, 'sentiments': sentiments, 'pos_tags': pos_tags}
         datasets.append(b_data_dict)

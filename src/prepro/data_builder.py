@@ -246,7 +246,7 @@ def _format_to_bert(params):
         for txt in src_txt:
             tb = TextBlob(txt)
             subjectivities.append({'polarity': tb.sentiment.polarity, 'subjectivity': tb.sentiment.subjectivity})
-            sentiments.append(sid.polarity_scores(txt))
+            sentiments.append([v for (k,v) in sid.polarity_scores(txt).items()])
         b_data_dict = {"src": indexed_tokens, "labels": labels, "segs": segments_ids, 'clss': cls_ids,
                        'src_txt': src_txt, "tgt_txt": tgt_txt, 'sentiments': sentiments, 'subjectivity': subjectivities}
         datasets.append(b_data_dict)
